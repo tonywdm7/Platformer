@@ -1,4 +1,5 @@
 import pygame
+from level_1 import start_level1
 
 WIDTH, HEIGHT = 420, 250
 BUTTON_WIDTH, BUTTON_HEIGHT = 100, 50
@@ -6,6 +7,8 @@ BUTTON_WIDTH, BUTTON_HEIGHT = 100, 50
 BLACK = (0, 0, 0)
 
 pygame.init()
+
+click_sound = pygame.mixer.Sound("click.mp3")
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Menu")
@@ -32,10 +35,12 @@ while run:
             run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                for i, button  in enumerate(buttons):
+                for i, button in enumerate(buttons):
                     if button.collidepoint(event.pos):
+                        click_sound.play()
                         print("hi")
-
+                        level = i + 1
+                        exec(f"start_level{level}()")
 
     screen.fill(BLACK)
 
