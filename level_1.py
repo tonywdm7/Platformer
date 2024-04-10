@@ -38,6 +38,25 @@ def start_level1():
 
         def collision_check(self, player_rect):
             return self.hitbox.colliderect(player_rect)
+    class Portal(pygame.sprite.Sprite):
+        def __init__(self, x, y):
+            super().__init__()
+            self.image = portal_img
+            self.rect = self.image.get_rect
+            self.rect = (x, y)
+
+        def draw(self, screen):
+            screen.blit(self.image, self.rect)
+
+    class Heart(pygame.sprite.Sprite):
+        def __init__(self, x, y):
+            super().__init__()
+            self.image = heart_img
+            self.rect = self.image.get_rect
+            self.rect = (x, y)
+
+        def draw(self, screen):
+            screen.blit(self.image, self.rect)
 
     platforms = []
     def add_platform(x, y, width, height):
@@ -57,8 +76,41 @@ def start_level1():
     pygame.mixer.music.play(-1)
 
     while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
+        for plt in platforms:
+            if plt.collision_check(player_rect):
+                player_center = player_rect.center
+                platform_center = plt.rect.center
+                dx = abs(player_center[0] - platform_center[0])
+                dy = abs(player_center[1] - platform_center[1] - 100)
+                if dx <= dy:
+                    if -dy <= 0:
+                        collide_check = True
 
+                    break
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_d]:
+            player_rect.x += player_speed
+        if keys[pygame.K_a]:
+            player_rect.x += player_speed
+
+        if not jumping:
+            if keys[pygame.K_SPACE] and collide_check:
+                jumping = True
+                player_rect.y -= jump_speed
+        else:
+            player_rect.y -= jump_speed
+            jump_speed -= 1
+            if jump_speed == 0:
+                jumping = False
+                jump_speed = 15
+
+        if not collide_check and jump_speed >= 0:
+            player_rect.y += gravity
 
 
 
@@ -68,4 +120,5 @@ def start_level1():
             plt.draw(screen)
 
         pygame.display.update()
+        pygame.time.Clock().tick(60)
 
